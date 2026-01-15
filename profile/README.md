@@ -168,23 +168,17 @@ L'intelligence de la plateforme est déportée dans des microservices Python (Fa
 
 - **Features critiques** : `missedPeriods` (historique de paiement), `totalDisputes` (antécédents juridiques), et `incomeStability`.
 
-**Formulation Mathématique** : Le score de risque final \(S(x)\) est obtenu par le vote majoritaire (averaging) des prédictions individuelles de chaque arbre de la forêt :
+**Formulation Mathématique** : Le score de risque final S(x) est obtenu par le vote majoritaire (averaging) des prédictions individuelles de chaque arbre de la forêt :
 
-\[
-S(x) = \frac{1}{N} \sum_{i=1}^{N} I(h_i(x) = \text{Risky})
-\]
+![Formula](https://latex.codecogs.com/svg.latex?S(x)=\frac{1}{N}\sum_{i=1}^{N}I(h_i(x)=\text{Risky}))
 
 **Où :**
 
-- \(N\) : Nombre total d'estimateurs (arbres) dans le modèle.
-- \(h_i(x)\) : Prédiction de la classe par l'arbre \(i\) pour un vecteur d'entrée \(x\).
-- \(I(\cdot)\) : Fonction indicatrice retournant 1 si la condition est vraie (prédiction "Risky"), 0 sinon.
+- N : Nombre total d'estimateurs (arbres) dans le modèle.
+- h_i(x) : Prédiction de la classe par l'arbre (i) pour un vecteur d'entrée (x).
+- I(·) : Fonction indicatrice retournant 1 si la condition est vraie (prédiction "Risky"), 0 sinon.
 
 **Note technique** : Cette approche probabiliste permet de classer les locataires en segments de risque (Low, Medium, High), facilitant ainsi la prise de décision automatisée pour les propriétaires.
-
-
----
-
 ## V. Couche Blockchain & Smart Contracts
 
 Nous adoptons une approche **Hybride** pour combiner la confiance du Web3 avec la performance du Web2.
