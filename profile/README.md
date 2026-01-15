@@ -67,15 +67,16 @@ graph LR
         RA <-->|Smart Contract| ETH
     end
 
-    %% Styles Professionnels Neutres
-    style CS fill:#f4f4f4,stroke:#708090,stroke-width:1px
-    style ALB fill:#f8f9fa,stroke:#232f3e,stroke-width:2px
-    style GW fill:#ececec,stroke:#333
-    style ETH fill:#3c3c3d,color:#fff,stroke-width:2px
-    style AI fill:#ffffff,stroke:#ff9900,stroke-width:2px
-    style MM fill:#ffffff,stroke:#e2761b,stroke-width:1px
-    style K fill:#f1f1f1,stroke:#333
-    style MS fill:#f9f9f9,stroke:#d1d1d1,stroke-dasharray: 5 5
+    %% Styles Uniformes "RDS Steel Gray"
+    classDef default fill:#eceff1,stroke:#546e7a,stroke-width:1px,color:#263238;
+    classDef specialized fill:#cfd8dc,stroke:#455a64,stroke-width:2px,color:#263238;
+
+    class CS,GW,UM,PM,NS,U,ALB,RDS default;
+    class AUTH,RA,AI,K,ETH,MM specialized;
+
+    %% Overrides spécifiques pour le contraste
+    style ETH fill:#3c3c3d,color:#fff
+    style ALB stroke:#232f3e,stroke-width:2px
 ```
 
 ---
@@ -107,7 +108,7 @@ Le backend est une constellation de microservices **Spring Boot 3.x**, communiqu
 
 ### 1. Config Service (`config-service-rental-estate`)
 *   **Rôle**: Serveur de configuration centralisé.
-*   **Backend**: Git-backed (`https://github.com/ahyahya1616/config-repo-estate-rental`).
+*   **Backend**: Git-backed (`https://github.com/RealEstate-Rental-Project/config-repo-estate-rental.git`).
 *   **Fonction**: Distribue les configurations dynamiques (hot-reload) à tous les autres services au démarrage.
 
 ### 2. Gateway Service (`gateway-estate-rental-service`)
