@@ -15,58 +15,64 @@ L'architecture repose sur un modèle **Event-Driven Microservices** orchestré s
 ![Infrastructure Architecture](../docs/infra.png)
 
 ```mermaid
-graph TD
-    subgraph Initialization ["1. Bootstrap Phase (Infrastructure Setup)"]
-        GR[GitHub: Config Repo] -->|Fetch Config| CS[Config Service]
-        CS -->|Distribute Props| MS[All Microservices]
+graph LR
+    %% Configuration du rendu
+    direction LR
+
+    subgraph Init ["1. Setup"]
+        GR[Config Repo] -->|Fetch| CS[Config Service]
+        CS -->|Distribute| MS[Microservices]
     end
 
-    subgraph External ["2. Client Layer (Browser)"]
-        U[User Browser / Nx App]
-        MM[MetaMask Extension]
-        U <-->|Sign Transaction| MM
+    subgraph UserZone ["2. Client & Web3"]
+        U[Browser / Nx App]
+        MM((MetaMask))
+        U <-->|Sign| MM
     end
 
-    subgraph Entry ["3. Edge & Security"]
-        ALB[AWS ALB]
-        GW[Spring Cloud Gateway]
-        AUTH[Authorization Service]
+    subgraph Security ["3. Edge & Auth"]
+        ALB{AWS ALB}
+        GW[Gateway]
+        AUTH[Auth Svc]
         
-        U -->|Request| ALB
+        U -->|HTTPS| ALB
         ALB --> GW
-        GW <-->|Validate JWT| AUTH
+        GW <-->|JWT| AUTH
     end
 
-    subgraph Internal ["4. Service Mesh (EKS Private Subnets)"]
-        UM[User Management]
-        PM[Property Service]
-        RA[Rental Agreement V2]
-        NS[Notification Service]
+    subgraph Core ["4. EKS Service Mesh"]
+        subgraph Logic ["Logic"]
+            UM[User Svc]
+            PM[Property Svc]
+            RA[Rental V2]
+        end
         
-        AI[AI Engine: Scoring/Heatmap]
-        
-        GW -->|Route| UM
-        GW -->|Route| PM
-        GW -->|Route| RA
-        
-        PM -.->|Internal Request| AI
-        RA -.->|Event| K[(Kafka)]
-        K -.->|Consume| NS
+        subgraph Support ["Async & AI"]
+            AI[AI Engine]
+            K((Kafka))
+            NS[Notif Svc]
+        end
+
+        GW --> Logic
+        PM -.->|Internal| AI
+        RA -.->|Event| K
+        K -.-> NS
     end
 
-    subgraph Persistence ["5. Data & Trust Layer"]
-        RDS[(Amazon RDS MySQL)]
-        ETH[Ethereum Blockchain]
+    subgraph Data ["5. Persistence"]
+        RDS[(RDS MySQL)]
+        ETH[[Ethereum]]
         
-        UM & PM & RA & NS & AI --> RDS
-        RA <-->|Smart Contract / Escrow| ETH
+        Logic & Support --> RDS
+        RA <-->|Escrow| ETH
     end
 
-    %% Styles
-    style CS fill:#f9f,stroke:#333,stroke-width:2px
-    style ETH fill:#3c3c3d,color:#fff,stroke-width:2px
-    style AI fill:#ff9900,stroke:#333,stroke-width:2px
+    %% Styles pour la lisibilité
+    style CS fill:#f9f,stroke:#333
+    style ETH fill:#3c3c3d,color:#fff
+    style AI fill:#ff9900,color:#fff
     style MM fill:#e2761b,color:#fff
+    style ALB fill:#f5f5f5,stroke:#232f3e
 ```
 
 ---
