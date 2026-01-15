@@ -15,7 +15,6 @@ L'architecture repose sur un modèle **Event-Driven Microservices** orchestré s
 ![Infrastructure Architecture](../docs/infra.png)
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': { 'fontSize': '16px'}, 'flowchart': {'nodeSpacing': 100, 'rankSpacing': 100, 'curve': 'basis'}}}%%
 graph TD
     subgraph Initialization ["1. Bootstrap Phase (Infrastructure Setup)"]
         GR[GitHub: Config Repo] -->|Fetch Config| CS[Config Service]
