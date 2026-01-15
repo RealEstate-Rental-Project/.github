@@ -170,7 +170,13 @@ L'intelligence de la plateforme est déportée dans des microservices Python (Fa
 
 **Formulation Mathématique** : Le score de risque final S(x) est obtenu par le vote majoritaire (averaging) des prédictions individuelles de chaque arbre de la forêt :
 
-![Formula](https://latex.codecogs.com/svg.latex?S(x)=\frac{1}{N}\sum_{i=1}^{N}I(h_i(x)=\text{Risky}))
+<div align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://latex.codecogs.com/svg.latex?\color{white}S(x)=\frac{1}{N}\sum_{i=1}^{N}I(h_i(x)=\text{Risky})">
+    <source media="(prefers-color-scheme: light)" srcset="https://latex.codecogs.com/svg.latex?\color{black}S(x)=\frac{1}{N}\sum_{i=1}^{N}I(h_i(x)=\text{Risky})">
+    <img alt="Formula" src="https://latex.codecogs.com/svg.latex?S(x)=\frac{1}{N}\sum_{i=1}^{N}I(h_i(x)=\text{Risky})">
+  </picture>
+</div>
 
 **Où :**
 
