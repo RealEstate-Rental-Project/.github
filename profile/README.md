@@ -14,11 +14,66 @@ L'architecture repose sur un modèle **Event-Driven Microservices** orchestré s
 
 ![Infrastructure Architecture](../docs/infra.png)
 
+```mermaid
+graph TD
+    subgraph Initialization ["1. Bootstrap Phase (Infrastructure Setup)"]
+        GR[GitHub: Config Repo] -->|Fetch Config| CS[Config Service]
+        CS -->|Distribute Props| MS[All Microservices]
+    end
+
+    subgraph External ["2. Client Layer (Browser)"]
+        U[User Browser / Nx App]
+        MM[MetaMask Extension]
+        U <-->|Sign Transaction| MM
+    end
+
+    subgraph Entry ["3. Edge & Security"]
+        ALB[AWS ALB]
+        GW[Spring Cloud Gateway]
+        AUTH[Authorization Service]
+        
+        U -->|Request| ALB
+        ALB --> GW
+        GW <-->|Validate JWT| AUTH
+    end
+
+    subgraph Internal ["4. Service Mesh (EKS Private Subnets)"]
+        UM[User Management]
+        PM[Property Service]
+        RA[Rental Agreement V2]
+        NS[Notification Service]
+        
+        AI[AI Engine: Scoring/Heatmap]
+        
+        GW -->|Route| UM
+        GW -->|Route| PM
+        GW -->|Route| RA
+        
+        PM -.->|Internal Request| AI
+        RA -.->|Event| K[(Kafka)]
+        K -.->|Consume| NS
+    end
+
+    subgraph Persistence ["5. Data & Trust Layer"]
+        RDS[(Amazon RDS MySQL)]
+        ETH[Ethereum Blockchain]
+        
+        UM & PM & RA & NS & AI --> RDS
+        RA <-->|Smart Contract / Escrow| ETH
+    end
+
+    %% Styles
+    style CS fill:#f9f,stroke:#333,stroke-width:2px
+    style ETH fill:#3c3c3d,color:#fff,stroke-width:2px
+    style AI fill:#ff9900,stroke:#333,stroke-width:2px
+    style MM fill:#e2761b,color:#fff
+```
+
 ---
 
 ## II. Architecture Infrastructure (Deep Cloud)
 
-L'infrastructure est entièrement définie en **Infrastructure as Code (IaC)** via Terraform, garantissant reproductibilité et immuabilité. Le déploiement cible la région AWS `eu-west-3` (Paris) pour des raisons de conformité RGPD et de latence.
+L'infrastructure est entièrement définie en **Infrastructure as Code (IaC)** via Terraform, garantissant reproductibilité et immuabilité. Le déploiement cible la région AWS `eu-north-1 (Stockholm)` pour des raisons de conformité RGPD et de latence.
 
 ### 1. Topologie EKS (Elastic Kubernetes Service)
 Le cluster `estate-rental-cluster` (v1.29) est le cœur opérationnel de la plateforme. Il est conçu pour une haute disponibilité et une isolation stricte des charges de travail.
@@ -66,6 +121,11 @@ Le backend est une constellation de microservices **Spring Boot 3.x**, communiqu
 
 ### 6. Authorization Service (`authorization-service`)
 *   **Rôle**: Serveur OAuth2 / OIDC. Délivre et signe les JWT.
+
+### 7. Rental Agreement Service (`Rental-Agreement-Microservice-V2`)
+*   **Rôle**: Orchestrateur des contrats de location et miroir d'état (State Mirror) pour la Blockchain.
+*   **Fonctions**: Gère la machine à états des contrats (`PENDING`, `ACTIVE`, `DISPUTED`), la réconciliation des paiements et la levée des litiges.
+*   **Interactions**: Synchronise les événements Blockchain (via le frontend) et notifie les parties prenantes via Kafka.
 
 ---
 
