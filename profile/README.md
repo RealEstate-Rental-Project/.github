@@ -19,60 +19,63 @@ graph LR
     %% Configuration du rendu
     direction LR
 
-    subgraph Init ["1. Setup"]
-        GR[Config Repo] -->|Fetch| CS[Config Service]
-        CS -->|Distribute| MS[Microservices]
+    subgraph Init ["⚙️ 1. Setup & Bootstrap"]
+        GR[/GitHub: Config Repo/] -->|Fetch| CS[Config Service]
+        CS -->|Distribute| MS[[All Microservices]]
     end
 
-    subgraph UserZone ["2. Client & Web3"]
-        U[Browser / Nx App]
-        MM((MetaMask))
-        U <-->|Sign| MM
+    subgraph UserZone ["🌐 2. Client & Web3"]
+        U((User Browser / Nx App))
+        MM>MetaMask Extension]
+        U <-->|Web3 Provider| MM
     end
 
-    subgraph Security ["3. Edge & Auth"]
+    subgraph Security ["🛡️ 3. Edge & Security"]
         ALB{AWS ALB}
-        GW[Gateway]
-        AUTH[Auth Svc]
+        GW[API Gateway]
+        AUTH[[Authorization Svc]]
         
-        U -->|HTTPS| ALB
+        U -->|HTTPS/TLS| ALB
         ALB --> GW
-        GW <-->|JWT| AUTH
+        GW <-->|JWT Validation| AUTH
     end
 
-    subgraph Core ["4. EKS Service Mesh"]
-        subgraph Logic ["Logic"]
+    subgraph Core ["🚢 4. EKS Service Mesh (Private)"]
+        subgraph Logic ["Logic Layer"]
             UM[User Svc]
             PM[Property Svc]
-            RA[Rental V2]
+            RA[[Rental Agreement V2]]
         end
         
-        subgraph Support ["Async & AI"]
-            AI[AI Engine]
-            K((Kafka))
-            NS[Notif Svc]
+        subgraph Support ["Async & Intelligence"]
+            AI[/AI Engine: FastAPI/]
+            K((Apache Kafka))
+            NS[Notification Svc]
         end
 
         GW --> Logic
-        PM -.->|Internal| AI
-        RA -.->|Event| K
-        K -.-> NS
+        PM -.->|Internal Request| AI
+        RA -.->|Event Stream| K
+        K -.->|Process| NS
     end
 
-    subgraph Data ["5. Persistence"]
-        RDS[(RDS MySQL)]
-        ETH[[Ethereum]]
+    subgraph Persistence ["💾 5. Data & Trust Layer"]
+        RDS[(Amazon RDS MySQL)]
+        ETH{{Ethereum Blockchain}}
         
         Logic & Support --> RDS
-        RA <-->|Escrow| ETH
+        RA <-->|Smart Contract| ETH
     end
 
-    %% Styles pour la lisibilité
-    style CS fill:#f9f,stroke:#333
-    style ETH fill:#3c3c3d,color:#fff
-    style AI fill:#ff9900,color:#fff
-    style MM fill:#e2761b,color:#fff
-    style ALB fill:#f5f5f5,stroke:#232f3e
+    %% Styles Professionnels Neutres
+    style CS fill:#f4f4f4,stroke:#708090,stroke-width:1px
+    style ALB fill:#f8f9fa,stroke:#232f3e,stroke-width:2px
+    style GW fill:#ececec,stroke:#333
+    style ETH fill:#3c3c3d,color:#fff,stroke-width:2px
+    style AI fill:#ffffff,stroke:#ff9900,stroke-width:2px
+    style MM fill:#ffffff,stroke:#e2761b,stroke-width:1px
+    style K fill:#f1f1f1,stroke:#333
+    style MS fill:#f9f9f9,stroke:#d1d1d1,stroke-dasharray: 5 5
 ```
 
 ---
