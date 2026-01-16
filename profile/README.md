@@ -45,7 +45,7 @@ graph LR
             UM[User Svc]
             PM[Property Svc]
             RA[[Rental Agreement V2]]
-        communication résiliente
+        communication resiliente
             RA -.->|Circuit Breaker / Fallback| PM
         end
         
