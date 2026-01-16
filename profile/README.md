@@ -45,6 +45,8 @@ graph LR
             UM[User Svc]
             PM[Property Svc]
             RA[[Rental Agreement V2]]
+        communication résiliente
+            RA -.->|Circuit Breaker / Fallback| PM
         end
         
         subgraph Support ["Async & Intelligence"]
@@ -53,7 +55,7 @@ graph LR
             NS[Notification Svc]
         end
 
-        GW --> Logic
+        GW -->|Resilient Routing| Logic
         PM -.->|Internal Request| AI
         RA -.->|Event Stream| K
         K -.->|Process| NS
@@ -70,9 +72,13 @@ graph LR
     %% Styles Uniformes "RDS Steel Gray"
     classDef default fill:#eceff1,stroke:#546e7a,stroke-width:1px,color:#263238;
     classDef specialized fill:#cfd8dc,stroke:#455a64,stroke-width:2px,color:#263238;
+    classDef resilient stroke:#f44336,stroke-width:3px,stroke-dasharray: 5 5;
 
     class CS,GW,UM,PM,NS,U,ALB,RDS default;
     class AUTH,RA,AI,K,ETH,MM specialized;
+
+    style GW stroke:#f44336,stroke-width:2px
+    style RA stroke:#f44336,stroke-width:2px
 
     %% Overrides spécifiques pour le contraste
     style ETH fill:#3c3c3d,color:#fff
@@ -104,7 +110,8 @@ Le cluster `estate-rental-cluster` (v1.29) est le cœur opérationnel de la plat
 
 ## III. Catalogue des Microservices (The Java Core)
 
-Le backend est une constellation de microservices **Spring Boot 3.x**, communiquant de manière synchrone (REST/OpenFeign) et asynchrone (Kafka).
+
+Le backend est une constellation de microservices **Spring Boot 3.x**, communiquant de manière synchrone (REST/OpenFeign) et asynchrone (Kafka). L'architecture intègre des modèles de résilience via **Resilience4j** pour garantir la stabilité globale et prévenir les défaillances en cascade.
 
 ### 1. Config Service (`config-service-rental-estate`)
 *   **Rôle**: Serveur de configuration centralisé.
@@ -113,8 +120,8 @@ Le backend est une constellation de microservices **Spring Boot 3.x**, communiqu
 
 ### 2. Gateway Service (`gateway-estate-rental-service`)
 *   **Rôle**: Point d'entrée unique (Edge Server).
-*   **Tech**: Spring Cloud Gateway.
-*   **Fonctions**: Routage dynamique, Rate Limiting, et agrégation de documentation API. Il expose les métriques Prometheus pour l'observabilité globale.
+*   **Tech**: Spring Cloud Gateway & **Resilience4j**.
+*   **Fonctions**: Routage dynamique, Rate Limiting, **Circuit Breaking (fail-fast)**, et agrégation de documentation API. Il expose les métriques Prometheus pour l'observabilité globale.
 
 ### 3. User Management Service (`user-management-estate-rental-service`)
 *   **Rôle**: Gestion des identités et des profils (Locataires, Propriétaires, Admins).
@@ -134,6 +141,7 @@ Le backend est une constellation de microservices **Spring Boot 3.x**, communiqu
 
 ### 7. Rental Agreement Service (`Rental-Agreement-Microservice-V2`)
 *   **Rôle**: Orchestrateur des contrats de location et miroir d'état (State Mirror) pour la Blockchain.
+*   **Resilience**: Utilise **Resilience4j** pour sécuriser les appels inter-services. Il implémente des **Circuit Breakers** et des **Fallback Handlers** personnalisés (ex: `PropertyFallbackHandler`) pour maintenir le service dégradé en cas d'indisponibilité du microservice Property.
 *   **Fonctions**: Gère la machine à états des contrats (`PENDING`, `ACTIVE`, `DISPUTED`), la réconciliation des paiements et la levée des litiges.
 *   **Interactions**: Synchronise les événements Blockchain (via le frontend) et notifie les parties prenantes via Kafka.
 
