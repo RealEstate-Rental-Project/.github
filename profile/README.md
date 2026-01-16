@@ -32,7 +32,7 @@ graph LR
 
     subgraph Security ["🛡️ 3. Edge & Security"]
         ALB{AWS ALB}
-        GW[API Gateway]
+        GW["API Gateway (Resilience4j)"]
         AUTH[[Authorization Svc]]
         
         U -->|HTTPS/TLS| ALB
@@ -45,7 +45,8 @@ graph LR
             UM[User Svc]
             PM[Property Svc]
             RA[[Rental Agreement V2]]
-        communication resiliente
+            
+            %% Communication resiliente entre services
             RA -.->|Circuit Breaker / Fallback| PM
         end
         
@@ -69,20 +70,17 @@ graph LR
         RA <-->|Smart Contract| ETH
     end
 
-    %% Styles Uniformes "RDS Steel Gray"
+    %% Styles
     classDef default fill:#eceff1,stroke:#546e7a,stroke-width:1px,color:#263238;
     classDef specialized fill:#cfd8dc,stroke:#455a64,stroke-width:2px,color:#263238;
-    classDef resilient stroke:#f44336,stroke-width:3px,stroke-dasharray: 5 5;
 
     class CS,GW,UM,PM,NS,U,ALB,RDS default;
     class AUTH,RA,AI,K,ETH,MM specialized;
 
+    %% Mise en évidence des composants avec Circuit Breaker
     style GW stroke:#f44336,stroke-width:2px
     style RA stroke:#f44336,stroke-width:2px
-
-    %% Overrides spécifiques pour le contraste
     style ETH fill:#3c3c3d,color:#fff
-    style ALB stroke:#232f3e,stroke-width:2px
 ```
 
 ---
