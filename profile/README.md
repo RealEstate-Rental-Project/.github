@@ -4,6 +4,19 @@
 **Status:** Production-Ready  
 **Maintainers:** CTO Office & Architecture Team
 
+
+---
+
+## Équipe & Rôles
+
+| Membre de l'équipe | Rôles & Responsabilités |
+| :--- | :--- |
+| **Kamouss Yassine** | Cloud Engineer & Frontend Engineer |
+| **Ahmane Yahya** | Backend Engineer & Frontend Engineer |
+| **Junaid Uthman** | BlockChain Engineer & Machine Learning Engineer |
+| **Salhi Mohamed** | DevOps Engineer & Machine Learning Engineer |
+
+
 ---
 
 ## I. Vision Stratégique & Écosystème Hybride
